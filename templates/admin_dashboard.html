@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Right Sidebar Menu -->
+        <div class="col-md-2 bg-light border-left">
+            <h4 class="mt-4">Menu</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.admin_dashboard', action='list_employees') }}">List Employees</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.admin_dashboard', action='create_employee') }}">Create Employee</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.admin_dashboard', action='update_account') }}">Update Account</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-10">
+            {% if action == 'list_employees' %}
+                <h2 class="mt-4">List of Employees</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Position</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td>{{ employee.id }}</td>
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.email }}</td>
+                            <td>{{ employee.position }}</td>
+                            <td>
+                                <a href="{{ url_for('main.edit_employee', employee_id=employee.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="{{ url_for('main.delete_employee', employee_id=employee.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% elif action == 'create_employee' %}
+                <h2 class="mt-4">Create New Employee</h2>
+                <form method="POST" action="{{ url_for('main.create_employee') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="picture" class="form-label">Picture</label>
+                        <input type="file" class="form-control" id="picture" name="picture" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="position" class="form-label">Employee Position</label>
+                        <input type="text" class="form-control" id="position" name="position" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="showNfcPopup()">Scan NFC</button>
+                    <button type="submit" class="btn btn-success">Create Employee</button>
+                </form>
+
+            {% elif action == 'update_account' %}
+                <h2 class="mt-4">Update Admin Account</h2>
+                <form method="POST" action="{{ url_for('main.update_account') }}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ admin.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <small class="form-text text-muted">Leave blank to keep current password.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Account</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<div id="nfcModal" class="modal" tabindex="-1" role="dialog" style="display:none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NFC Ring Scanning</h5>
+                <button type="button" class="close" onclick="hideNfcPopup()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Please bring your NFC ring for scanning.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="hideNfcPopup()">Close</button>
+                <button type="button" class="btn btn-primary" id="scanNfcBtn">Scan NFC</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showNfcPopup() {
+    document.getElementById('nfcModal').style.display = 'block';
+}
+
+function hideNfcPopup() {
+    document.getElementById('nfcModal').style.display = 'none';
+}
+
+document.getElementById('scanNfcBtn').addEventListener('click', function() {
+    // Call your NFC scan function here (using AJAX)
+    scanNfc();
+});
+
+function scanNfc() {
+    // Example AJAX request to scan NFC and handle response
+    fetch('/scan_nfc', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            // Any data you need to send for scanning
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('NFC scanned successfully!'); // Handle success
+            // Optionally, redirect to employee creation
+            hideNfcPopup();
+        } else {
+            alert('Failed to scan NFC ring. Please try again.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}

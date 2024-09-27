@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Edit Employee{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Edit Employee</h2>
+    <form method="POST" action="{{ url_for('main.edit_employee', employee_id=employee.id) }}" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ employee.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ employee.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" value="{{ employee.phone }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea class="form-control" id="address" name="address" rows="2" required>{{ employee.address }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="age" class="form-label">Age</label>
+            <input type="number" class="form-control" id="age" name="age" value="{{ employee.age }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="position" class="form-label">Employee Position</label>
+            <input type="text" class="form-control" id="position" name="position" value="{{ employee.position }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="picture" class="form-label">Update Picture</label>
+            <input type="file" class="form-control" id="picture" name="picture" accept="image/*">
+            <small class="form-text text-muted">Leave blank to keep the current picture.</small>
+        </div>
+        <button type="submit" class="btn btn-success">Update Employee</button>
+    </form>
+</div>
+{% endblock %}

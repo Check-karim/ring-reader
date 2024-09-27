@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Update Account{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Update Admin Account</h2>
+    <form method="POST" action="{{ url_for('main.update_account') }}">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ admin.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="password" name="password">
+            <small class="form-text text-muted">Leave blank to keep the current password.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Account</button>
+    </form>
+</div>
+{% endblock %}
